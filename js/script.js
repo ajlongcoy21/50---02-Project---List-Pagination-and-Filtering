@@ -22,10 +22,13 @@ function mainScript()
 
    /* 
    Define Const Variables
+   div - the div element where the page buttons will be
    ul - is the unordered list html element that will show all the list items
    liStudentArray - is the complete list of students that are in the html when the page loads
+   studentsPerPage - max number of students allowed per page
    */
 
+   const div = document.querySelector('.page');
    const ul = document.getElementsByClassName('student-list');
    const liStudentArray = document.querySelectorAll('.student-item.cf');
    const studentsPerPage = 10;
@@ -42,6 +45,9 @@ function mainScript()
    {
       ul[0].firstChild.remove();
    }
+
+   showPage(1);
+   appendPageLinks();
 
    /*** 
       Create the `showPage` function to hide all of the items in the 
@@ -121,7 +127,25 @@ function mainScript()
       functionality to the pagination buttons.
    ***/
 
+   function appendPageLinks()
+   {
+         function createElement(elementName, property, value)
+         {
+            const element = document.createElement(elementName);
+            element[property] = value;
+            element['text-align'] = 'center';
+            return element;
+         }
 
+         let element;
+
+         for (let index = 1; index <= numberOfPagesAllowed; index++) 
+         {
+            element = createElement('button', 'textContent', index);
+            div.appendChild(element);
+         }
+         
+   }
 
 
 

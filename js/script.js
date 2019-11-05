@@ -9,17 +9,6 @@ document.addEventListener('DOMContentLoaded', () => {mainScript()});
 
 function mainScript()
 {
-   /*** 
-      Add your global variables that store the DOM elements you will 
-      need to reference and/or manipulate. 
-      
-      But be mindful of which variables should be global and which 
-      should be locally scoped to one of the two main functions you're 
-      going to create. A good general rule of thumb is if the variable 
-      will only be used inside of a function, then it can be locally 
-      scoped to that function.
-   ***/
-
    /* 
    Define Const Variables
    div - the div element where the page buttons will be
@@ -50,18 +39,12 @@ function mainScript()
    appendPageLinks();
 
    /*** 
-      Create the `showPage` function to hide all of the items in the 
-      list except for the ten you want to show.
+      function showPage
+      Parameters: pageNumber - integer for the page number
+      returns: N/A
 
-      Pro Tips: 
-      - Keep in mind that with a list of 54 students, the last page 
-         will only display four.
-      - Remember that the first student has an index of 0.
-      - Remember that a function `parameter` goes in the parens when 
-         you initially define the function, and it acts as a variable 
-         or a placeholder to represent the actual function `argument` 
-         that will be passed into the parens later when you call or 
-         "invoke" the function 
+      Description: This fuctions takes a page number and displays the students that should be visible on
+      that page.
    ***/
 
    function showPage(pageNumber)
@@ -76,11 +59,11 @@ function mainScript()
 
       // Check to see which page number was requested
 
-      if (pageNumber > numberOfPagesAllowed) 
+      if (pageNumber > numberOfPagesAllowed || pageNumber === 0) 
       {
          // If for some reason the page number is greater than the number of pages allowed notify the user
 
-         alert("There are not enough students to display onto this page.");   
+         alert("Sorry! Somehow you got to a page you should not get to. Please try again, thank you.");   
       }
       else if (pageNumber < numberOfPagesAllowed && pageNumber > 0) 
       {
@@ -123,27 +106,113 @@ function mainScript()
    }
 
    /*** 
-      Create the `appendPageLinks function` to generate, append, and add 
-      functionality to the pagination buttons.
+      function appendPageLinks
+      Parameters: N/A
+      returns: N/A
+
+      Description: This fuctions creates the HTML elements for the page links at the bottom of the page. It will 
+      dynamically create the correct number of pages needed to display the students at 10 students per page.
    ***/
 
    function appendPageLinks()
    {
+         /*
+            function createElement
+            Parameters:
+               elementName - string value for the element to be created
+               property - string value for the property to be adjusted
+               value - string value for the property to be set to
+            Returns: 
+               element - html element
+         */
+
          function createElement(elementName, property, value)
          {
+            // Define and create element
             const element = document.createElement(elementName);
+
+            // Set the property value
             element[property] = value;
-            element['text-align'] = 'center';
+
+            // Return the element
             return element;
          }
 
-         let element;
+         /*
+            function createLiElement
+            Parameters: N/A
+            Returns: 
+               an li html element
+         */
+
+         function createLiElement()
+         {
+            return document.createElement('li');
+         }
+
+         // Create the div and ul element for the pagination links
+
+         let divElement = createElement('div');
+         divElement.className = 'pagination';
+
+         let ulElement = document.createElement('ul');
+
+         // append the ul element inside the new div element
+
+         divElement.appendChild(ulElement);
+
+         // create li and a variables
+         let liElement;
+         let aElement;
+
+         // Loop through to create the correct number of page links
 
          for (let index = 1; index <= numberOfPagesAllowed; index++) 
          {
-            element = createElement('button', 'textContent', index);
-            div.appendChild(element);
+            // Create li and a elements
+            liElement = createLiElement();
+            aElement = createElement('a', 'href', '#');
+
+            // Set the text of the link to the page number specific for that link
+            aElement.text = index;
+
+            // Since this is the initial setup, we will set the first page link to be active
+
+            if (index === 1) 
+            {
+               aElement.className = 'active';
+            }
+
+            // add event listeners to each link
+
+            aElement.addEventListener('click', (event) => {
+
+               // find the element that is currently active so we can deactivate it
+
+               aElementLeaving = document.querySelector('.active');
+
+               // remove the active state from the element
+
+               aElementLeaving.classList.remove('active');
+
+               // set the new target to active
+
+               event.target.className = 'active';
+
+               // Change student list to display based off of the page link clicked
+
+               showPage(event.target.text)
+            });
+
+            // append to the li and ul elements
+            liElement.appendChild(aElement);
+            ulElement.appendChild(liElement);
+
          }
+
+         // append the new div to the main div
+         
+         div.appendChild(divElement);
          
    }
 

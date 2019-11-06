@@ -13,9 +13,10 @@ function mainScript()
    Define Const Variables
    div - the div element where the page buttons will be
    ul - is the unordered list html element that will show all the list items
+   studentsPerPage - max number of students allowed per page
+
    liStudentArrayMaster - is the complete list of students that are in the html when the page loads
    liStudentArray - is the filtered down list of students from the search input
-   studentsPerPage - max number of students allowed per page
    */
 
    const divPage = document.querySelector('.page');
@@ -87,7 +88,7 @@ function mainScript()
       {
          numberOfPagesAllowed = Math.floor(liStudentArray.length / studentsPerPage) + 1;
       }
-      
+
       numberOfStudentsOnLastPage = liStudentArray.length % studentsPerPage;
       
    }
@@ -300,6 +301,13 @@ function mainScript()
          const divStudentSearch = createElement('div', 'className', 'student-search');
          const inputStudentSearch = createElement('input', 'placeholder', 'Search for students...');
          const buttonStudentSearch = createElement('button', 'textContent', 'Search');
+
+         inputStudentSearch.addEventListener('keyup', (event) => {
+            let inputSearch = document.querySelector('input');
+            subListOfStudents(inputStudentSearch.value);
+            showPage(1);
+            appendPageLinks();
+         });
 
          buttonStudentSearch.addEventListener('click', (event) => {
             let inputSearch = document.querySelector('input');

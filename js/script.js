@@ -28,8 +28,8 @@ function mainScript()
 
    // Get the number of pages allowed and determine the number of students on the last page
 
-   const numberOfPagesAllowed =Math.floor(liStudentArray.length / studentsPerPage) + 1;
-   const numberOfStudentsOnLastPage = liStudentArray.length % studentsPerPage;
+   let numberOfPagesAllowed = Math.floor(liStudentArray.length / studentsPerPage) + 1;
+   let numberOfStudentsOnLastPage = liStudentArray.length % studentsPerPage;
 
    // Setup blank page to allow to start showing the students by page
    // While there is a child element of ul, remove it from the page
@@ -39,9 +39,58 @@ function mainScript()
       ul[0].firstChild.remove();
    }
 
+   subListOfStudents('');
    showPage(1);
    appendPageLinks();
    createSearchElements();
+
+   function subListOfStudents(searchText)
+   {
+      liStudentArray = [];
+      let liNode;
+      let divElement;
+      let divChild;
+      let h3Element;
+
+      if (searchText === '') 
+      {
+         liStudentArray = liStudentArrayMaster;
+      }
+      else
+      {
+         for (let index = 0; index < liStudentArrayMaster.length; index++) 
+         {
+            liNode = liStudentArrayMaster[index];
+            divElement = liNode.firstElementChild;
+            divChild = divElement.firstElementChild;
+            h3Element = divChild.nextElementSibling;
+
+            if (h3Element.textContent.indexOf(searchText) !== -1)
+            {
+               liStudentArray.push(liStudentArrayMaster[index]);
+            }
+         }
+      }
+
+      if (liStudentArray.length === 0) 
+      {
+         liStudentArray.push(createElement('h3','innerText','No results found.'));
+      }
+
+      // update the number of pages allowed and students on last page information based on filtered sublist
+
+      if (liStudentArray.length === 10) 
+      {
+         numberOfPagesAllowed = 1;
+      }
+      else
+      {
+         numberOfPagesAllowed = Math.floor(liStudentArray.length / studentsPerPage) + 1;
+      }
+      
+      numberOfStudentsOnLastPage = liStudentArray.length % studentsPerPage;
+      
+   }
 
    /*** 
       function showPage
@@ -62,41 +111,12 @@ function mainScript()
          ul[0].firstChild.remove();
       }
 
-      // Check to see which page number was requested
-
-      if (pageNumber > numberOfPagesAllowed || pageNumber === 0) 
+      if (liStudentArray.length <= 10) 
       {
-         // If for some reason the page number is greater than the number of pages allowed notify the user
-
-         alert("Sorry! Somehow you got to a page you should not get to. Please try again, thank you.");   
-      }
-      else if (pageNumber < numberOfPagesAllowed && pageNumber > 0) 
-      {
-         // If the page number is in the correct range specified:
-
-         // Get the upper and lower index that will be displayed from the array
-
-         let upperIndex = pageNumber * 10 - 1;
-         let lowerIndex = upperIndex - 9;
-
-         // Loop through the array only showing the students for that specific page
-
-         for (let index = lowerIndex; index < upperIndex + 1; index++) 
-         {
-            // append the student to the unordered list
-
-            ul[0].appendChild(liStudentArray[index]);
-         }
-
-      }
-      else
-      {
-         // else the page number is the last page:
-
          // Get the upper and lower index that will be displayed from the array
 
          let upperIndex = liStudentArray.length - 1;
-         let lowerIndex = liStudentArray.length - numberOfStudentsOnLastPage;
+         let lowerIndex = 0;
 
          // Loop through the array only showing the students for that specific page
 
@@ -106,18 +126,58 @@ function mainScript()
 
             ul[0].appendChild(liStudentArray[index]);
          }
+      } 
+      else 
+      {
+         // Check to see which page number was requested
+
+         if (pageNumber > numberOfPagesAllowed || pageNumber === 0) 
+         {
+            // If for some reason the page number is greater than the number of pages allowed notify the user
+
+            alert("Sorry! Somehow you got to a page you should not get to. Please try again, thank you.");   
+         }
+         else if (pageNumber < numberOfPagesAllowed && pageNumber > 0) 
+         {
+            // If the page number is in the correct range specified:
+
+            // Get the upper and lower index that will be displayed from the array
+
+            let upperIndex = pageNumber * 10 - 1;
+            let lowerIndex = upperIndex - 9;
+
+            // Loop through the array only showing the students for that specific page
+
+            for (let index = lowerIndex; index < upperIndex + 1; index++) 
+            {
+               // append the student to the unordered list
+
+               ul[0].appendChild(liStudentArray[index]);
+            }
+
+         }
+         else
+         {
+            // else the page number is the last page:
+
+            // Get the upper and lower index that will be displayed from the array
+
+            let upperIndex = liStudentArray.length - 1;
+            let lowerIndex = liStudentArray.length - numberOfStudentsOnLastPage;
+
+            // Loop through the array only showing the students for that specific page
+
+            for (let index = lowerIndex; index < upperIndex + 1; index++) 
+            {
+               // append the student to the unordered list
+
+               ul[0].appendChild(liStudentArray[index]);
+            }
+         }
       }
+      
    
    }
-
-   /*** 
-      function appendPageLinks
-      Parameters: N/A
-      returns: N/A
-
-      Description: This fuctions creates the HTML elements for the page links at the bottom of the page. It will 
-      dynamically create the correct number of pages needed to display the students at 10 students per page.
-   ***/
 
    /*
       function createElement
@@ -141,8 +201,20 @@ function mainScript()
       return element;
    }
 
+   /*** 
+      function appendPageLinks
+      Parameters: N/A
+      returns: N/A
+
+      Description: This fuctions creates the HTML elements for the page links at the bottom of the page. It will 
+      dynamically create the correct number of pages needed to display the students at 10 students per page.
+   ***/
+
    function appendPageLinks()
    {
+      
+      divPage.lastChild.remove();
+
          /*
             function createLiElement
             Parameters: N/A
@@ -228,6 +300,13 @@ function mainScript()
          const divStudentSearch = createElement('div', 'className', 'student-search');
          const inputStudentSearch = createElement('input', 'placeholder', 'Search for students...');
          const buttonStudentSearch = createElement('button', 'textContent', 'Search');
+
+         buttonStudentSearch.addEventListener('click', (event) => {
+            let inputSearch = document.querySelector('input');
+            subListOfStudents(inputStudentSearch.value);
+            showPage(1);
+            appendPageLinks();
+         });
 
          divStudentSearch.appendChild(inputStudentSearch);
          divStudentSearch.appendChild(buttonStudentSearch);

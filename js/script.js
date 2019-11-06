@@ -13,14 +13,18 @@ function mainScript()
    Define Const Variables
    div - the div element where the page buttons will be
    ul - is the unordered list html element that will show all the list items
-   liStudentArray - is the complete list of students that are in the html when the page loads
+   liStudentArrayMaster - is the complete list of students that are in the html when the page loads
+   liStudentArray - is the filtered down list of students from the search input
    studentsPerPage - max number of students allowed per page
    */
 
-   const div = document.querySelector('.page');
+   const divPage = document.querySelector('.page');
+   const divPageHeader = document.querySelector('.page-header');
    const ul = document.getElementsByClassName('student-list');
-   const liStudentArray = document.querySelectorAll('.student-item.cf');
    const studentsPerPage = 10;
+
+   let liStudentArrayMaster = document.querySelectorAll('.student-item.cf');
+   let liStudentArray = liStudentArrayMaster;
 
    // Get the number of pages allowed and determine the number of students on the last page
 
@@ -37,6 +41,7 @@ function mainScript()
 
    showPage(1);
    appendPageLinks();
+   createSearchElements();
 
    /*** 
       function showPage
@@ -114,30 +119,30 @@ function mainScript()
       dynamically create the correct number of pages needed to display the students at 10 students per page.
    ***/
 
+   /*
+      function createElement
+      Parameters:
+         elementName - string value for the element to be created
+         property - string value for the property to be adjusted
+         value - string value for the property to be set to
+      Returns: 
+         element - html element
+   */
+
+   function createElement(elementName, property, value)
+   {
+      // Define and create element
+      const element = document.createElement(elementName);
+
+      // Set the property value
+      element[property] = value;
+
+      // Return the element
+      return element;
+   }
+
    function appendPageLinks()
    {
-         /*
-            function createElement
-            Parameters:
-               elementName - string value for the element to be created
-               property - string value for the property to be adjusted
-               value - string value for the property to be set to
-            Returns: 
-               element - html element
-         */
-
-         function createElement(elementName, property, value)
-         {
-            // Define and create element
-            const element = document.createElement(elementName);
-
-            // Set the property value
-            element[property] = value;
-
-            // Return the element
-            return element;
-         }
-
          /*
             function createLiElement
             Parameters: N/A
@@ -212,8 +217,22 @@ function mainScript()
 
          // append the new div to the main div
          
-         div.appendChild(divElement);
+         divPage.appendChild(divElement);
          
+   }
+
+   function createSearchElements()
+   {
+         // Insert student search input
+
+         const divStudentSearch = createElement('div', 'className', 'student-search');
+         const inputStudentSearch = createElement('input', 'placeholder', 'Search for students...');
+         const buttonStudentSearch = createElement('button', 'textContent', 'Search');
+
+         divStudentSearch.appendChild(inputStudentSearch);
+         divStudentSearch.appendChild(buttonStudentSearch);
+         divPageHeader.appendChild(divStudentSearch);
+
    }
 
 

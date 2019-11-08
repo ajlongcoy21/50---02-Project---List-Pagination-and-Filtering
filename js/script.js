@@ -45,13 +45,32 @@ function mainScript()
    appendPageLinks();
    createSearchElements();
 
+   /*** 
+      function subListOfStudents
+      Parameters: searchText - string to search for in the student array
+      returns: N/A
+
+      Description: This fuctions takes a string and searches the liStudentArrayMaster to see if that search
+      string exists in the master list. After finding results, it is put into the liStudentArray to use to dusplay
+      the results to the user.
+
+   ***/
+
    function subListOfStudents(searchText)
    {
+      // clear student arra
+
       liStudentArray = [];
+
+      // define elements
+
       let liNode;
       let divElement;
       let divChild;
       let h3Element;
+
+      // if the search string is empty set the studentArray list to the StudentArrayMaster list
+      // else loop through the students to see who matches the search text
 
       if (searchText === '') 
       {
@@ -61,18 +80,24 @@ function mainScript()
       {
          for (let index = 0; index < liStudentArrayMaster.length; index++) 
          {
+            // obtian the h3 element with the name of the student
+
             liNode = liStudentArrayMaster[index];
             divElement = liNode.firstElementChild;
             divChild = divElement.firstElementChild;
             h3Element = divChild.nextElementSibling;
 
-            if (h3Element.textContent.indexOf(searchText) !== -1)
+            // see if the name contains the search string and if so push onto studentArray
+
+            if (h3Element.textContent.toLowerCase().indexOf(searchText.toLowerCase()) !== -1)
             {
                liStudentArray.push(liStudentArrayMaster[index]);
             }
          }
       }
 
+      // if no results were found, display on the page to the user explaining no results were found.
+      
       if (liStudentArray.length === 0) 
       {
          liStudentArray.push(createElement('h3','innerText','No results found.'));
@@ -302,6 +327,8 @@ function mainScript()
          const inputStudentSearch = createElement('input', 'placeholder', 'Search for students...');
          const buttonStudentSearch = createElement('button', 'textContent', 'Search');
 
+         // add event listener to search input to update everytime a key is pressed
+
          inputStudentSearch.addEventListener('keyup', (event) => {
             let inputSearch = document.querySelector('input');
             subListOfStudents(inputStudentSearch.value);
@@ -309,12 +336,16 @@ function mainScript()
             appendPageLinks();
          });
 
+         // add event listener to the button to update everytime the button is clicked
+
          buttonStudentSearch.addEventListener('click', (event) => {
             let inputSearch = document.querySelector('input');
             subListOfStudents(inputStudentSearch.value);
             showPage(1);
             appendPageLinks();
          });
+
+         // append the elements to the HTML page
 
          divStudentSearch.appendChild(inputStudentSearch);
          divStudentSearch.appendChild(buttonStudentSearch);
